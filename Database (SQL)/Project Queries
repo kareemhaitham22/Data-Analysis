@@ -1,0 +1,65 @@
+1) Highest 20 total amount a customer paid in the transaction 
+
+SELECT c.FirstName,
+       c.LastName,
+       c.Country,
+       c.City,
+       c.Phone,
+       MAX(i.Total) AS customer_total
+FROM Invoice i
+JOIN Customer c ON c.CustomerId = i.CustomerId
+GROUP BY c.CustomerId
+ORDER BY i.Total DESC
+LIMIT 20;
+
+
+
+2) Top 5 Artists of Jazz music
+
+SELECT ar.Name AS Artist_Name,
+       g.Name AS Gendre_Name,
+       al.Title AS Album_Title,
+       t.Name AS Track_Name,
+       COUNT(t.Name) AS Jazz_music_written_Count
+FROM Artist ar
+JOIN Album al ON ar.ArtistId = al.ArtistId
+JOIN Track t ON al.AlbumId = t.AlbumId
+JOIN Genre g ON g.GenreId = t.GenreId
+WHERE Gendre_Name = 'Jazz'
+GROUP BY Artist_Name
+ORDER BY Jazz_music_written_Count DESC
+LIMIT 5;
+
+
+3) Highest 10 countries having music listeners
+
+SELECT c.Country AS Country,
+       c.City AS City,
+       t.Name AS Track_Name,
+       g.Name AS Genre_Name,
+       COUNT(c.CustomerId) AS Music_Listeners_Count
+FROM Customer c
+JOIN Invoice i ON c.CustomerId = i.CustomerId
+JOIN InvoiceLine il ON i.InvoiceId = il.InvoiceId
+JOIN Track t ON il.TrackId = t.TrackId
+JOIN Genre g ON t.GenreId = g.GenreId
+GROUP BY Country
+ORDER BY Music_Listeners_Count DESC
+LIMIT 10;
+
+
+4)  Top 10 Genre types in canada
+
+SELECT g.Name AS Genre_Name,
+       i.BillingCountry AS Country,
+       t.Name AS Track_Name,
+       count(*) AS Invoices_Count
+FROM Invoice i
+JOIN InvoiceLine il ON i.InvoiceId = il.InvoiceId
+JOIN Track t ON il.TrackId = t.TrackId
+JOIN Genre g ON t.GenreId = g.GenreId
+GROUP BY Genre_Name,
+         Country
+HAVING Country='Canada'
+ORDER BY Invoices_Count DESC
+LIMIT 10;
